@@ -15,7 +15,7 @@ public abstract class BankAccount {
 
     protected BankAccount(long id, long customerId, String accountNumber, BigDecimal openingBalance) {
         this.id = id; this.customerId = customerId; this.accountNumber = accountNumber;
-        this.balance = money(openingBalance);
+        this.balance = balanceMoney(openingBalance);
     }
     public long id() { return id; }
     public long customerId() { return customerId; }
@@ -31,6 +31,10 @@ public abstract class BankAccount {
     public ReentrantLock lock() { return lock; }
     protected static BigDecimal money(BigDecimal value) {
         if (value == null || value.signum() <= 0) throw new IllegalArgumentException("Amount must be positive");
+        return value.setScale(2, RoundingMode.HALF_EVEN);
+    }
+    private static BigDecimal balanceMoney(BigDecimal value) {
+        if (value == null || value.signum() < 0) throw new IllegalArgumentException("Opening balance cannot be negative");
         return value.setScale(2, RoundingMode.HALF_EVEN);
     }
     public abstract String accountType();
